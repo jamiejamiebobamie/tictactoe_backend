@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>This is a Tic Tac Toe API that suggests moves.</h1>
+    <h2>Make a query to the api in the form of:</h2>
+    <h3>api/v1/turn/o/board/xox!o!</h3>
+    <h3>From the above URL, the api will think it's O's turn</h3>
+    <h3>and that the board looks like this:</h3>
+    <h3>x o x</h3>
+    <h3>_ o _</h3>
+    <h3>_ _ _</h3>
+    <h3>As you can see, the trailing blank spots can be omitted.</h3>
+    <h3>DO NOT omit blank spots that precede an x or o.</h3>
+    <h2>The API will return an updated board as JSON:</h2>
+    <h3>{"board": "xox!o!!o!"}</h3>
+    <h4>(Not the prettiest to read and understand if you're a human, but perfect for your app.)</h4>
+{% endblock %}
