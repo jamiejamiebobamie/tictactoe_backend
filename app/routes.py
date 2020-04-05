@@ -1,9 +1,14 @@
-from flask import render_template, flash, redirect, url_for
+from flask import Flask, render_template, flash, redirect, url_for
 from app import app
 from flask_cors import CORS, cross_origin
-# cors = CORS(app)
+from flask_talisman import Talisman
+
+
+# public API, allow all requests *
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-app.config['CORS_HEADERS'] = 'Content-Type'
+
+# redirects http traffic to use https
+# Talisman(app)
 
 from app.utils.general import sanitize_input, convert_array_to_return_board_string
 from app.utils.rand import pick_random_move, get_available_moves
