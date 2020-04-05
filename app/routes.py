@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for
 from app import app
 from flask_cors import CORS, cross_origin
 cors = CORS(app)
-# app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 from app.utils.general import sanitize_input, convert_array_to_return_board_string
 from app.utils.rand import pick_random_move, get_available_moves
@@ -15,7 +15,7 @@ def index():
 
 # suggest random move
 @app.route('/api/v1/rand/turn/<turn>/board/<board>')
-@cross_origin
+@cross_origin()
 def random_move(turn, board):
     turn, board, ok = sanitize_input(turn,board)
     index = pick_random_move(board)
@@ -25,7 +25,7 @@ def random_move(turn, board):
     return { "board" : board }
 
 @app.route('/api/v1/turn/<turn>/board/<board>', methods=['GET'])
-@cross_origin
+@cross_origin()
 def suggest_move(turn,board):
 
     opponent_LOOKUP = {'x':'o','o':'x'}
