@@ -1,5 +1,7 @@
 from flask import render_template, flash, redirect, url_for
 from app import app
+from flask_cors import CORS
+CORS(app)
 
 from app.utils.general import sanitize_input, convert_array_to_return_board_string
 from app.utils.rand import pick_random_move, get_available_moves
