@@ -138,27 +138,20 @@ def get_index_of_max(iterable):
 
     return max_i
 
-def get_indices_of_max(iterable):
-    """Return the max indices of the iterable."""
+def get_max_values(iterable):
+    """Return the max values of the iterable."""
 
-    max_indices = []
-    max_v = float('-inf')
+    max_values = []
+    max_v = max(iterable)
     ACCEPTABLE_DIFFERENCE = 1 # hyperparameter
 
-    for i, iter in enumerate(iterable):
+    for iter in iterable:
         difference = max_v - iter
         squared_difference = difference*difference
         if squared_difference < ACCEPTABLE_DIFFERENCE:
-            max_indices.append(i)
-        else:
-            temp = max_v
-            max_v = max(iter,max_v)
-            if max_v != temp:
-                max_indices = []
-                max_i = i
-                max_indices.append(max_i)
+            max_values.append(iter)
 
-    return max_indices
+    return max_values
 
 def check_winner(board_state):
     """
