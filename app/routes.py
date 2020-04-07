@@ -2,6 +2,7 @@ from flask import Flask, render_template, flash, redirect, url_for
 from app import app
 from flask_cors import CORS, cross_origin
 from flask_talisman import Talisman
+import random
 
 
 # public API, allow all requests *
@@ -10,9 +11,9 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 # redirects http traffic to use https
 # Talisman(app)
 
-from app.utils.general import sanitize_input, convert_array_to_return_board_string
+from app.utils.general import sanitize_input, convert_array_to_return_string
 from app.utils.rand import pick_random_move, get_available_moves
-from app.utils.suggest import convert_csv_to_Q, convert_input_to_keys, get_index_of_max
+from app.utils.suggest import convert_csv_to_Q, convert_input_to_key, get_index_of_max, get_available_moves, check_winner, get_indices_of_max, compute_R, convert_Q_key_to_string_array
 
 @app.route('/')
 @app.route('/index')
@@ -34,60 +35,41 @@ def random_move(turn, board):
 @cross_origin()
 def suggest_move(turn,board):
 
-    opponent_LOOKUP = {'x':'o','o':'x'}
-
     file_path = 'Q.csv'
     Q = convert_csv_to_Q(file_path)
 
     turn, board, ok = sanitize_input(turn, board)
 
-    # the Q is built with arbitrary player labels: "True" and "False"
-        # as opposed to 'x' and 'o'.
-    # as a result, it might be useful to lookup both instances in the Q
-        # for the best move.
+    winner = None
+
     if ok:
-        lookup_keys = convert_input_to_keys(turn, board)
-    else:
-        return render_template('404.html'), 404
+        key = convert_input_to_key(turn, board)
+        state = key
+        turn, board_state = state
 
-    valid_moves0 = Q.get(lookup_keys[0],False)
-    valid_moves1 = Q.get(lookup_keys[1],False)
+        # check that there isn't a winner
+        winner = check_winner(board_state)
+        if winner == None:
+            # check to see if are any immediate winning or blocking moves
+            immediate_rewards = compute_R(state)
+            if max(immediate_rewards) > 0:
+                move_here = get_index_of_max(immediate_rewards)
+            else:
+                indices_possible_moves = get_available_moves(board_state)
+                # test to see if the state is in the Q.
+                valid_state = Q.get(state, False)
+                if valid_state:
+                    rewards_of_moves = []
+                    for index in indices_possible_moves:
+                        rewards_of_moves.append(valid_state[index])
+                    best_moves = get_indices_of_max(rewards_of_moves)
+                    move_here = random.choice(best_moves)
+                else:
+                    move_here = random.choice(indices_possible_moves)
+            board = list(board_state)
+            board[move_here] = int(turn)
+            board = convert_Q_key_to_string_array(board)
 
-    # if both entries are in the dictionary, find the best possible move from
-        # both.
-    if valid_moves0 and valid_moves1:
+    board = convert_array_to_return_string(board)
 
-        LOOKUP = {}
-
-        index0 = get_index_of_max(valid_moves0)
-        max_from_false = valid_moves0[index0]
-        LOOKUP[max_from_false] = (index0, valid_moves0)
-
-        index1 = get_index_of_max(valid_moves1)
-        max_from_true = valid_moves1[index1]
-        LOOKUP[max_from_true] = (index1, valid_moves1)
-
-        max_move = max(max_from_false, max_from_true)
-        # determine which board has the max_move
-        (max_move_index, _) = LOOKUP[max_move]
-
-        board = list(board)
-        board[max_move_index] = turn
-
-    # if only False's entry is in the dictionary, get the max.
-    elif valid_moves0:
-        max_move_index = get_index_of_max(valid_moves0)
-        # convert tuple to list
-        board = list(board)
-        board[max_move_index] = turn
-
-    # if only True's entry is in the dictionary, get the max.
-    elif valid_moves1:
-        max_move_index = get_index_of_max(valid_moves1)
-        # convert tuple to list
-        board = list(board)
-        board[max_move_index] = turn
-
-    board = convert_array_to_return_board_string(board)
-
-    return { "board" : board }
+    return { "board" : board, "winner": str(winner)}

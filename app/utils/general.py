@@ -24,7 +24,7 @@ def sanitize_input(turn, board):
 
     return turn, board, ok
 
-def convert_array_to_return_board_string(board):
+def convert_array_to_return_string(board):
     """Converts an array of 'x','o', None into a string of 'x','o','!'
     """
     board = [space if space != None else '!' for space in board]
