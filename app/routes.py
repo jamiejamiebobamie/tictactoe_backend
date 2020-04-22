@@ -4,12 +4,8 @@ from flask_cors import CORS, cross_origin
 
 import random
 
-
 # public API, allow all requests *
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-# redirects http traffic to use https
-# Talisman(app)
 
 from app.utils.general import sanitize_input, convert_array_to_return_string
 from app.utils.rand import pick_random_move, get_available_moves
@@ -25,16 +21,19 @@ def index():
 @cross_origin()
 def random_move(turn, board):
     turn, board, ok = sanitize_input(turn,board)
-    index = pick_random_move(board)
-    if index > -1:
-        board[index] = turn
-    board = convert_array_to_return_board_string(board)
-    return { "board" : board }
+    key = convert_input_to_key(turn, board)
+    _, board_state = key
+    winner = check_winner(board_state)
+    if not winner:
+        index = pick_random_move(board)
+        if index > -1:
+            board[index] = turn
+    board = convert_array_to_return_string(board)
+    return { "board" : board, "winner" : winner}
 
 @app.route('/api/v1/turn/<turn>/board/<board>', methods=['GET'])
 @cross_origin()
 def suggest_move(turn,board):
-    # print(turn,board)
     file_path = 'Q.csv'
     Q = convert_csv_to_Q(file_path)
 
@@ -54,7 +53,6 @@ def suggest_move(turn,board):
             immediate_rewards = compute_R(state)
             if max(immediate_rewards) > 0:
                 move_here = get_index_of_max(immediate_rewards)
-                # print('R_matrix',move_here)
             else:
                 indices_possible_moves = get_available_moves(board_state)
                 # test to see if the state is in the Q.
@@ -70,15 +68,12 @@ def suggest_move(turn,board):
                     move_here_value = random.choice(best_moves)
                     if move_here_value == 0:
                         move_here = random.choice(indices_possible_moves)
-                        # print('Q_random',move_here)
                     else:
                         for index in indices_possible_moves:
                             if valid_state[index] == move_here_value:
                                 move_here = index
-                        # print('Q',move_here)
                 else:
                     move_here = random.choice(indices_possible_moves)
-                    # print('random',move_here)
 
             board = list(board_state)
             board[move_here] = int(turn)
