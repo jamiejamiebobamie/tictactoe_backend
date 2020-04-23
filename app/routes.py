@@ -28,6 +28,10 @@ def random_move(turn, board):
         index = pick_random_move(board)
         if index > -1:
             board[index] = turn
+    # check winner again.
+    key = convert_input_to_key(turn, board)
+    _, board_state = key
+    winner = check_winner(board_state)
     board = convert_array_to_return_string(board)
     return { "board" : board, "winner" : winner}
 
@@ -77,6 +81,10 @@ def suggest_move(turn,board):
 
             board = list(board_state)
             board[move_here] = int(turn)
+            # check winner again.
+            key = convert_input_to_key(turn, board)
+            _, board_state = key
+            winner = check_winner(board_state)
             board = convert_Q_key_to_string_array(board)
 
     board = convert_array_to_return_string(board)
