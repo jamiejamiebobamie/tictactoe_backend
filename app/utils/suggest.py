@@ -209,7 +209,6 @@ def check_winner(board_state):
         # 0 wins
         elif Zero_count == 3:
             return 0
-    print(One_count,Zero_count)
     # tie
     return -1 if len(indices_ones) + len(indices_zeroes) == len(board_state) else None
 
