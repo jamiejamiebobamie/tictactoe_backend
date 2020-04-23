@@ -92,4 +92,4 @@ def suggest_move(turn,board):
 
     board = convert_array_to_return_string(board)
 
-    return { "board" : board, "winner": str(winner)}
+    return { "board" : board, "winner": winner}
