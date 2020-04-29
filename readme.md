@@ -18,7 +18,7 @@ Here are some example queries to the API:
 Using the AI:
 * https://play-tictactoe-ai.herokuapp.com/api/v1/turn/o/board/xox!o!!x
 * https://play-tictactoe-ai.herokuapp.com/api/v1/turn/X/board/o
-* https://play-tictactoe-ai.herokuapp.com/api/v1/turn/o/board/oxoxO!!x!
+* https://play-tictactoe-ai.herokuapp.com/api/v1/turn/o/board/oxoxO!!x
 * https://play-tictactoe-ai.herokuapp.com/api/v1/turn/X/board/!o
 
 
@@ -26,7 +26,7 @@ Random Moves:
 * https://play-tictactoe-ai.herokuapp.com/api/v1/rand/turn/o/board/xox!o!!x
 * https://play-tictactoe-ai.herokuapp.com/api/v1/rand/turn/X/board/o
 * https://play-tictactoe-ai.herokuapp.com/api/v1/rand/turn/O/board/!x
-* https://play-tictactoe-ai.herokuapp.com/api/v1/rand/turn/x/board/!XOO!!
+* https://play-tictactoe-ai.herokuapp.com/api/v1/rand/turn/x/board/!XOO
 
 ## Authors
 
